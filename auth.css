@@ -1,0 +1,278 @@
+/* Google Font */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+/* Reset */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+
+/* Body Styling */
+
+body {
+    background: linear-gradient(135deg, #4f46e5, #3b82f6);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Container for Forms */
+
+.container,
+form {
+    background: #fff;
+    padding: 2.5rem 2rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 400px;
+    animation: fadeIn 0.6s ease;
+}
+
+
+/* Form Heading */
+
+form h2 {
+    text-align: center;
+    margin-bottom: 1.8rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+
+/* Input Containers */
+
+form div {
+    margin-bottom: 1.3rem;
+}
+
+
+/* Labels */
+
+label {
+    display: block;
+    font-weight: 500;
+    color: #334155;
+    margin-bottom: 0.4rem;
+    font-size: 0.95rem;
+}
+
+
+/* Input Fields */
+
+input,
+.input-box {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5rem;
+    outline: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+}
+
+input:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    background: #fff;
+}
+
+
+/* Button Styling */
+
+button,
+.btn-primary {
+    width: 100%;
+    padding: 0.9rem;
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.3s ease, transform 0.15s ease;
+}
+
+button:hover,
+.btn-primary:hover {
+    background: #4338ca;
+    transform: translateY(-2px);
+}
+
+button:active,
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+
+/* Text Links */
+
+p {
+    text-align: center;
+    margin-top: 1.3rem;
+    font-size: 0.9rem;
+    color: #475569;
+}
+
+a {
+    color: #4f46e5;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+/* Animation */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* Responsive Design */
+
+@media (max-width: 480px) {
+    form,
+    .container {
+        margin: 0 1rem;
+        padding: 2rem 1.5rem;
+    }
+    h2 {
+        font-size: 1.5rem;
+    }
+}
+
+/* ------------------------------------ */
+/* Additions: Auth header & utilities   */
+/* ------------------------------------ */
+
+.auth-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(90deg, #4f46e5, #4338ca);
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    color: #fff;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.auth-header .brand {
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+.auth-header .auth-nav {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.auth-header .auth-nav a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255,255,255,0.25);
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.auth-header .auth-nav a:hover {
+    background: rgba(255,255,255,0.18);
+    border-color: rgba(255,255,255,0.35);
+}
+
+/* Small-screen layout tweaks */
+@media (max-width: 480px) {
+    .auth-header { flex-wrap: wrap; row-gap: 0.5rem; }
+    .auth-header .brand { width: 100%; text-align: center; }
+    .auth-header .auth-nav { width: 100%; justify-content: center; flex-wrap: wrap; }
+}
+
+/* Ensure page content not hidden behind fixed header */
+body { padding-top: 56px; }
+
+/* Optional: language button class to replace inline styles if present */
+.lang-toggle {
+    background: #e5e7eb;
+    color: #374151;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+/* Subtle subtitle helper */
+.subtitle { color: #6b7280; font-size: 0.9rem; text-align: center; margin-top: -0.5rem; margin-bottom: 1rem; }
+
+/* Utility: centered row with bottom margin */
+.center-row { text-align: center; margin-bottom: 1rem; }
+
+/* ------------------------------------ */
+/* In-card header variant (page-scoped) */
+/* ------------------------------------ */
+
+/* Hide fixed header only when body opts in */
+.use-card-header .auth-header { display: none; }
+body.use-card-header { padding-top: 0; }
+
+/* Center the form vertically and horizontally on pages opting into card header */
+body.use-card-header {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+/* Responsive max-width helper for forms if needed */
+.form-card { width: 100%; max-width: 28rem; }
+
+.form-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(90deg, #4f46e5, #4338ca);
+    color: #fff;
+    border-radius: 0.75rem;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+    margin-bottom: 0.75rem;
+}
+
+.form-card-header .brand { font-weight: 600; letter-spacing: .2px; }
+.form-card-header .auth-nav { display: flex; gap: .5rem; }
+.form-card-header .auth-nav a {
+    color: #fff;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.25);
+    padding: .3rem .6rem;
+    border-radius: 9999px;
+    font-weight: 500;
+}
+.form-card-header .auth-nav a:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.35); }
