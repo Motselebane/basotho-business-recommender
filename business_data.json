@@ -1,0 +1,31 @@
+[{
+        "title": "Poultry Farming",
+        "skills": ["farming", "management"],
+        "interests": ["agriculture", "food"],
+        "minCapital": 3000,
+        "availability": ["full-time", "part-time"],
+        "tags": ["food", "chicken", "farm"],
+        "description": "Start a small poultry farm to supply eggs and meat locally.",
+        "why": "High demand in Lesotho with low competition in some areas."
+    },
+    {
+        "title": "Mobile Phone Repairs",
+        "skills": ["electronics", "repair"],
+        "interests": ["technology"],
+        "minCapital": 2000,
+        "availability": ["full-time", "part-time"],
+        "tags": ["tech", "mobile"],
+        "description": "Offer affordable repair services for phones and electronics.",
+        "why": "Growing number of smartphone users in Lesotho."
+    },
+    {
+        "title": "Vegetable Greenhouse",
+        "skills": ["farming"],
+        "interests": ["agriculture"],
+        "minCapital": 5000,
+        "availability": ["full-time"],
+        "tags": ["farm", "food", "vegetable"],
+        "description": "Grow vegetables year-round using greenhouse technology.",
+        "why": "Food security and year-round supply create business opportunity."
+    }
+]

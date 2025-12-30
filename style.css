@@ -1,0 +1,858 @@
+/* ------------------------------------------------- */
+
+
+/* Basotho Business Recommender - Professional CSS  */
+
+
+/* ------------------------------------------------- */
+
+
+/* ---------------------------- */
+
+
+/* Global Styles & Font         */
+
+
+/* ---------------------------- */
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f9fa;
+    /* Soft light background */
+    color: #1f2937;
+    /* Dark gray text */
+    margin: 0;
+    padding: 0;
+}
+
+
+/* Container */
+
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+
+/* ---------------------------- */
+
+
+/* Header & Footer              */
+
+
+/* ---------------------------- */
+
+header,
+footer {
+    background: linear-gradient(90deg, #4f46e5, #4338ca);
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+
+/* Footer smaller text */
+
+footer {
+    font-size: 0.9rem;
+}
+
+
+/* ---------------------------- */
+
+
+/* Hero Section                 */
+
+
+/* ---------------------------- */
+
+.hero {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #4f46e5;
+}
+
+.hero p {
+    font-size: 1.1rem;
+    color: #4b5563;
+    /* Muted gray */
+}
+
+
+/* ---------------------------- */
+
+
+/* Form Section                 */
+
+
+/* ---------------------------- */
+
+form {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #374151;
+}
+
+
+/* Inputs */
+
+.input-box {
+    width: 100%;
+    border: 1px solid #ddd;
+    padding: 12px 14px;
+    border-radius: 12px;
+    outline: none;
+    transition: border 0.3s, box-shadow 0.3s;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.input-box:focus {
+    border: 1px solid #4f46e5;
+    box-shadow: 0 0 6px rgba(79, 70, 229, 0.3);
+}
+
+
+/* ---------------------------- */
+
+
+/* Buttons                       */
+
+
+/* ---------------------------- */
+
+.btn-primary,
+.btn-secondary {
+    cursor: pointer;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    display: inline-block;
+}
+
+
+/* Primary Button */
+
+.btn-primary {
+    background: #4f46e5;
+    color: #ffffff;
+    padding: 12px 20px;
+}
+
+.btn-primary:hover {
+    background: #4338ca;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+}
+
+
+/* Secondary Button */
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: #4f46e5;
+    padding: 10px 16px;
+}
+
+.btn-secondary:hover {
+    background: #e0e7ff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+
+/* ---------------------------- */
+
+
+/* GPS Image Styling             */
+
+
+/* ---------------------------- */
+
+#gpsImage {
+    margin-top: 10px;
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 50px;
+    height: 30px;
+    object-fit: cover;
+}
+
+#gpsImage:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+/* ---------------------------- */
+
+
+/* Results Section              */
+
+
+/* ---------------------------- */
+
+#results {
+    margin-top: 30px;
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+#results h3 {
+    margin-bottom: 15px;
+    color: #4f46e5;
+}
+
+
+/* ---------------------------- */
+
+
+/* Language Toggle Button       */
+
+
+/* ---------------------------- */
+
+#langToggle {
+    cursor: pointer;
+    background-color: #ffffff;
+    color: #4f46e5;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    border: 1px solid #4f46e5;
+    transition: all 0.3s ease;
+}
+
+#langToggle:hover {
+    background-color: #4f46e5;
+    color: #ffffff;
+}
+
+
+/* ---------------------------- */
+
+
+/* Responsive Adjustments       */
+
+
+/* ---------------------------- */
+
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+    }
+    .hero h1 {
+        font-size: 2rem;
+    }
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        text-align: center;
+    }
+    #gpsImage {
+        width: 40px;
+        height: 25px;
+    }
+}
+
+.input-box::placeholder {
+    color: #9ca3af;
+    /* soft gray */
+    font-style: italic;
+}
+
+
+/* Spinner animation for loading */
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+
+/* Loading Animation */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 3rem 2rem;
+    min-height: 200px;
+    text-align: center;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(79, 70, 229, 0.1);
+    border-radius: 50%;
+    border-top-color: #4f46e5;
+    border-right-color: #4f46e5;
+    animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    margin: 0 auto;
+    position: relative;
+}
+
+.spinner::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    color: #4b5563;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-top: 1rem;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.loading-dots {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 20px;
+    margin-top: 1rem;
+}
+
+.loading-dots div {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #4f46e5;
+    animation: loading-dots 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+
+.loading-dots div:nth-child(1) {
+    left: 8px;
+    animation-delay: -0.24s;
+}
+
+.loading-dots div:nth-child(2) {
+    left: 32px;
+    animation-delay: -0.12s;
+}
+
+.loading-dots div:nth-child(3) {
+    left: 56px;
+    animation-delay: 0;
+}
+
+@keyframes loading-dots {
+    0% {
+        top: 8px;
+        height: 64px;
+    }
+    50%, 100% {
+        top: 24px;
+        height: 32px;
+    }
+}
+
+/* Progress bar for longer operations */
+.progress-container {
+    width: 100%;
+    max-width: 400px;
+    background-color: #f3f4f6;
+    border-radius: 4px;
+    margin: 1rem auto;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 8px;
+    background-color: #4f46e5;
+    width: 0%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    animation: progress 1.5s ease-in-out infinite;
+}
+
+@keyframes progress {
+    0% { width: 0%; }
+    50% { width: 100%; }
+    100% { width: 0%; margin-left: 100%; }
+}
+
+/* History Link */
+.history-link {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.history-link a {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #4f46e5;
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.history-link a:hover {
+    background-color: #4338ca;
+}
+
+/* Existing styles */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 5px solid #ddd;
+    border-top: 5px solid #4f46e5;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* Organization Icons with Horizontal Color Bar */
+
+.org-icon {
+    position: relative;
+    padding: 0.5rem 1rem 0.5rem 2.5rem;
+    margin-left: -1.5rem;
+    margin-right: 0.5rem;
+    display: flex;
+    align-items: center;
+    border-radius: 0 9999px 9999px 0;
+    height: 2.5rem;
+}
+
+.org-icon::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.org-icon .card-icon {
+    position: relative;
+    z-index: 2;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.org-icon.blue {
+    background-color: #e0f2fe;
+    color: #0369a1;
+}
+
+.org-icon.blue::before {
+    background-color: #0ea5e9;
+}
+
+.org-icon.green {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.org-icon.green::before {
+    background-color: #22c55e;
+}
+
+.org-icon.yellow {
+    background-color: #fef9c3;
+    color: #a16207;
+}
+
+.org-icon.yellow::before {
+    background-color: #eab308;
+}
+
+.card-icon {
+    width: 2rem !important;
+    height: 2rem !important;
+    max-width: none !important;
+}
+
+
+/* Contact Icons - Smaller size with better alignment */
+
+.contact-icon {
+    width: 0.75rem !important;
+    height: 0.75rem !important;
+    min-width: 0.75rem !important;
+    margin-right: 0.5rem !important;
+    color: #6b7280 !important;
+    flex-shrink: 0 !important;
+    max-width: none !important;
+    stroke-width: 1.5 !important;
+    position: relative;
+    top: -0.05rem;
+    /* Fine-tune vertical alignment */
+}
+
+
+/* Contact item container */
+
+.contact-item {
+    display: flex;
+    align-items: flex-start;
+    line-height: 1.25;
+}
+
+
+/* External Link Icons - Smaller size */
+
+.external-link-icon {
+    width: 0.75rem !important;
+    height: 0.75rem !important;
+    min-width: 0.75rem !important;
+    margin-left: 0.25rem !important;
+    color: #3b82f6 !important;
+    flex-shrink: 0 !important;
+    max-width: none !important;
+    stroke-width: 1.5 !important;
+    position: relative;
+    top: 0.1rem;
+}
+
+
+/* Ensure consistent spacing for all contact info items */
+
+.space-y-2>*+* {
+    margin-top: 0.5rem !important;
+}
+
+
+/* Adjust spacing for contact items */
+
+.space-y-2 {
+    gap: 0.5rem !important;
+}
+
+.org-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.contact-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.org-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    /* rounded-full */
+}
+
+.org-icon.blue {
+    background-color: #ebf4ff;
+}
+
+
+/* light blue */
+
+.org-icon.green {
+    background-color: #ecfdf5;
+}
+
+
+/* light green */
+
+.org-icon.yellow {
+    background-color: #fef9c3;
+}
+
+
+/* light yellow */
+
+/* ------------------------------------ */
+/* Additions: Non-breaking UI/UX tweaks */
+/* ------------------------------------ */
+
+/* Utility: hidden */
+.hidden {
+    display: none !important;
+}
+
+/* Base button to support markup using `btn btn-primary` */
+.btn {
+    display: inline-block;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Ensure anchors styled as buttons inherit color properly */
+a.btn-primary, a.btn-secondary {
+    color: inherit;
+}
+
+/* Header actions container */
+.header-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+/* Loading and error states (used in recommendation page) */
+.loading {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    color: #374151;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+}
+
+.error {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    padding: 14px 16px;
+    border-radius: 12px;
+    margin-top: 12px;
+}
+
+/* Recommendation details card */
+.recommendation-details {
+    display: block;
+}
+
+.recommendation-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    padding: 20px;
+}
+
+.recommendation-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #f3f4f6;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+.recommendation-header h2 {
+    font-size: 1.25rem;
+    margin: 0;
+    color: #111827;
+}
+
+.recommendation-header .date {
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+.recommendation-section + .recommendation-section {
+    margin-top: 16px;
+}
+
+.recommendation-section h3 {
+    color: #4f46e5;
+    margin: 0 0 6px 0;
+    font-size: 1rem;
+}
+
+.recommendation-section p {
+    margin: 0;
+    color: #374151;
+    line-height: 1.6;
+}
+
+.recommendation-meta {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #f3f4f6;
+}
+
+.recommendation-meta .meta-item {
+    display: flex;
+    gap: 8px;
+}
+
+.recommendation-meta .meta-label {
+    font-weight: 600;
+    color: #374151;
+}
+
+@media (min-width: 640px) {
+    .recommendation-meta {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Business Support grid fallback (in case utility classes are missing) */
+#businessSupport .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    #businessSupport .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1.25rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    #businessSupport .grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.5rem;
+    }
+}
+
+/* Accessibility: clear focus outlines for interactive controls */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a.btn:focus-visible,
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible {
+    outline: 3px solid rgba(79, 70, 229, 0.5);
+    outline-offset: 2px;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ------------------------------------ */
+/* Star Rating Widget (minimal styles)  */
+/* ------------------------------------ */
+.rating-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+}
+
+.stars {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.star {
+    cursor: pointer;
+    font-size: 2.5rem; /* ~40px on desktop */
+    color: #d1d5db; /* gray-300 */
+    transition: color 0.25s ease, transform 0.12s ease, text-shadow 0.25s ease;
+    user-select: none;
+    padding: 4px; /* larger touch target */
+}
+
+.star.active { color: #FFD700; text-shadow: 0 0 8px rgba(255, 215, 0, 0.6); } /* gold + glow when selected */
+.star:hover,
+.star:hover ~ .star { color: #fbbf24; } /* amber-400 on hover preview */
+.star:active { transform: scale(0.95); }
+
+/* Subtle growth on hover for better feedback */
+.star:hover { transform: scale(1.08); }
+
+/* JS-applied preview class for hover intent */
+.star.preview { color: #fbbf24; } /* amber-400 */
+
+.star:focus { outline: none; }
+.star:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
+
+.rating-actions {
+    margin-top: 10px;
+}
+
+.average-rating-badge {
+    display: inline-block;
+    background: #eef2ff;
+    color: #4338ca;
+    border: 1px solid #e0e7ff;
+    padding: 6px 10px;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.rating-hint { margin-top: 6px; font-size: 0.9rem; color: #4b5563; }
+.rating-note { margin-top: 4px; font-size: 0.8rem; color: #6b7280; }

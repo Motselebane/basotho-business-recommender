@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendation Details - Basotho Business Ideas</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { corePlugins: { preflight: false } }
+    </script>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <h1 data-lang="recommendation-details">Recommendation Details</h1>
+            <div class="header-actions">
+                <a href="app.php" class="btn btn-primary" data-lang="new-recommendation">New Recommendation</a>
+                <a href="history.php" class="btn btn-secondary" data-lang="back-to-history" style="color: blue;">Back to History</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="loading" class="loading" data-lang="loading-details">Loading recommendation details...</div>
+        <div id="error" class="error hidden"></div>
+        <div id="recommendationDetails" class="recommendation-details hidden">
+            <!-- Recommendation details will be loaded here -->
+        </div>
+        <!-- Rating Section -->
+        <div id="ratingSection" class="rating-card hidden">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:.5rem; flex-wrap:wrap;">
+                <div><strong>Rate this recommendation</strong></div>
+                <div id="avgRating" class="average-rating-badge" aria-live="polite"></div>
+            </div>
+            <div class="stars" id="starContainer" role="radiogroup" aria-label="Rating"></div>
+            <div class="rating-actions">
+                <button id="submitRating" class="btn-primary" type="button">Submit Rating</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 Basotho Business Ideas. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async() => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const recommendationId = urlParams.get('id');
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error');
+            const detailsEl = document.getElementById('recommendationDetails');
+            const ratingSection = document.getElementById('ratingSection');
+            const starContainer = document.getElementById('starContainer');
+            const submitBtn = document.getElementById('submitRating');
+            const avgRatingEl = document.getElementById('avgRating');
+            let currentRating = 0;
+
+            if (!recommendationId) {
+                showError('No recommendation ID provided');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/recommendations/${recommendationId}`, {
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    let errorMessage = 'Failed to load recommendation details';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.error || errorMessage;
+                    } catch (parseError) {
+                        // If response isn't JSON, provide a generic message
+                        switch (response.status) {
+                            case 404:
+                                errorMessage = 'Recommendation not found. It may have been deleted.';
+                                break;
+                            case 500:
+                                errorMessage = 'Server error. Please try again later.';
+                                break;
+                            case 403:
+                                errorMessage = 'Access denied. Please log in again.';
+                                break;
+                            default:
+                                errorMessage = `Unable to load recommendation (Error ${response.status})`;
+                        }
+                    }
+                    throw new Error(errorMessage);
+                }
+
+                const data = await response.json();
+                if (!data.recommendation) {
+                    throw new Error('Invalid recommendation data received');
+                }
+
+                displayRecommendation(data.recommendation);
+                // Initialize rating UI
+                const initial = clampRating(data.recommendation.rating);
+                setupStars(initial);
+                ratingSection.classList.remove('hidden');
+                // Load current average rating badge
+                refreshAverageRating();
+            } catch (error) {
+                let userFriendlyMessage = error.message;
+
+                // Handle network errors
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    userFriendlyMessage = 'Unable to connect to the server. Please check your internet connection and try again.';
+                }
+
+                showError(userFriendlyMessage);
+            } finally {
+                loadingEl.classList.add('hidden');
+            }
+
+            function displayRecommendation(rec) {
+                detailsEl.innerHTML = `
+                    <div class="recommendation-card">
+                        <div class="recommendation-header">
+                            <h2>${escapeHtml(rec.business_title || 'Business Recommendation')}</h2>
+                            <span class="date">${formatDate(rec.created_at)}</span>
+                        </div>
+                        
+                        <div class="recommendation-section">
+                            <h3 data-lang="business-description">Business Description</h3>
+                            <p>${formatRecommendation(rec.business_description || 'No description available')}</p>
+                        </div>
+
+                        <div class="recommendation-section">
+                            <h3 data-lang="problem-solved">Problem Solved</h3>
+                            <p>${formatRecommendation(rec.problem_solved || 'Not specified')}</p>
+                        </div>
+
+                        <div class="recommendation-section">
+                            <h3 data-lang="why-this-fits">Why This Fits You</h3>
+                            <p>${formatRecommendation(rec.reason_for_fit || 'Not specified')}</p>
+                        </div>
+
+                        <div class="recommendation-meta">
+                            <div class="meta-item">
+                                <span class="meta-label" data-lang="location-label">Location:</span>
+                                <span>${escapeHtml(rec.location || 'Not specified')}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label" data-lang="estimated-capital">Estimated Capital:</span>
+                                <span>${escapeHtml(rec.estimated_capital || 'Not specified')}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label" data-lang="suggested-schedule">Suggested Schedule:</span>
+                                <span>${escapeHtml(rec.suggested_schedule || 'Not specified')}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label" data-lang="your-skills">Your Skills:</span>
+                                <span>${escapeHtml(rec.skills || 'Not specified')}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label" data-lang="your-interests">Your Interests:</span>
+                                <span>${escapeHtml(rec.interests || 'Not specified')}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                detailsEl.classList.remove('hidden');
+            }
+
+            function setupStars(initial) {
+                currentRating = initial || 0;
+                renderStars();
+                starContainer.addEventListener('click', (e) => {
+                    const t = e.target;
+                    if (t && t.dataset && t.dataset.value) {
+                        currentRating = parseInt(t.dataset.value, 10);
+                        renderStars();
+                    }
+                });
+                submitBtn.addEventListener('click', submitRating);
+            }
+
+            function renderStars() {
+                starContainer.innerHTML = '';
+                for (let i = 1; i <= 5; i++) {
+                    const span = document.createElement('span');
+                    span.className = 'star' + (i <= currentRating ? ' active' : '');
+                    span.textContent = '★';
+                    span.setAttribute('role', 'radio');
+                    span.setAttribute('aria-checked', i === currentRating ? 'true' : 'false');
+                    span.setAttribute('tabindex', '0');
+                    span.dataset.value = String(i);
+                    starContainer.appendChild(span);
+                }
+            }
+
+            async function submitRating() {
+                if (!recommendationId) return;
+                if (currentRating < 1 || currentRating > 5) {
+                    console.warn('Please select a rating between 1 and 5');
+                    return;
+                }
+                try {
+                    const res = await fetch('business-recommender/rating_update.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: Number(recommendationId), rating: currentRating })
+                    });
+                    const data = await res.json();
+                    if (!res.ok || !data.success) {
+                        throw new Error(data.error || 'Failed to save rating');
+                    }
+                    // Refresh average rating after successful submission
+                    refreshAverageRating();
+                } catch (err) {
+                    console.error('Rating submission error:', err);
+                }
+            }
+
+            async function refreshAverageRating() {
+                try {
+                    const res = await fetch('business-recommender/website_rating.php', { cache: 'no-store' });
+                    const data = await res.json();
+                    if (data.success && data.rating) {
+                        const lang = window.currentLang || localStorage.getItem('selectedLanguage') || 'en';
+                        const translatedText = translations[lang] && translations[lang]['average-website-rating'] 
+                            ? translations[lang]['average-website-rating'] 
+                            : 'Average Website Rating';
+                        avgRatingEl.textContent = `🌟 ${translatedText}: ${data.rating} / 5`;
+                    }
+                } catch (e) {
+                    avgRatingEl.textContent = '';
+                }
+            }
+
+            function clampRating(val) {
+                const n = parseInt(val, 10);
+                if (isNaN(n)) return 0;
+                return Math.max(0, Math.min(5, n));
+            }
+
+            function showError(message) {
+                errorEl.textContent = message;
+                errorEl.classList.remove('hidden');
+            }
+
+            function escapeHtml(unsafe) {
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
+            function formatRecommendation(text) {
+                if (!text) return 'No information available';
+                // Convert markdown-style *bold* to <strong> tags
+                return escapeHtml(text)
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // **bold**
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>') // *italic*
+                    .replace(/\n/g, '<br>'); // New lines
+            }
+
+            function formatDate(dateString) {
+                if (!dateString) return '';
+                const options = {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                };
+                return new Date(dateString).toLocaleDateString(undefined, options);
+            }
+        });
+    </script>
+</body>
+
+</html>

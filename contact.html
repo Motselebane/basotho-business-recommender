@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Support</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false
+            }
+        };
+    </script>
+    <script defer src="scripts.js"></script>
+</head>
+
+<body class="min-h-screen bg-slate-50 text-slate-800">
+    <header class="bg-white/90 backdrop-blur border-b border-slate-200">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="index.php" class="text-lg font-semibold text-slate-900" data-lang="brand-site">Basotho Business Ideas</a>
+            <div class="flex items-center gap-4">
+                <nav class="space-x-4 text-sm">
+                    <a href="app.php" class="text-indigo-600 hover:underline" data-lang="nav-app">Home</a>
+                    <a href="history.php" class="text-slate-600 hover:underline" data-lang="nav-history">History</a>
+                    <span class="text-slate-400" data-lang="nav-contact">Contact</span>
+                </nav>
+                <button id="langToggle" class="bg-white text-indigo-600 px-3 py-1 rounded-md text-sm font-medium border border-slate-200">Sesotho</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-4 py-10">
+        <div class="bg-white rounded-2xl shadow-md border border-slate-200">
+            <div class="p-6 md:p-8">
+                <h1 class="text-2xl font-semibold text-slate-900 mb-2" data-lang="contact-title">Contact Support</h1>
+                <p class="text-slate-600 mb-6" data-lang="contact-intro">If you're experiencing issues with the app, reach out and we'll help you as soon as possible.</p>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <div class="text-indigo-600 mt-0.5">📧</div>
+                            <div>
+                                <div class="font-medium" data-lang="contact-email">Email</div>
+                                <a href="letholemotselebane@gmail.com" class="text-indigo-600 hover:underline">letholemotselebane@gmail.com</a>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="text-indigo-600 mt-0.5">📞</div>
+                            <div>
+                                <div class="font-medium" data-lang="contact-phone">Phone</div>
+                                <a href="tel:+266505952402" class="text-indigo-600 hover:underline">+266 50592402</a>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="text-indigo-600 mt-0.5">💬</div>
+                            <div>
+                                <div class="font-medium" data-lang="contact-whatsapp">WhatsApp</div>
+                                <a href="https://wa.me/+26650592402" class="text-indigo-600 hover:underline" target="_blank" rel="noopener" data-lang="message-whatsapp">Message us on WhatsApp</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 text-sm">
+                        <div class="font-medium text-slate-900" data-lang="contact-helpful-title">Helpful details to include</div>
+                        <ul class="list-disc pl-5 space-y-1 text-slate-600">
+                            <li data-lang="contact-helpful-1">What you were trying to do</li>
+                            <li data-lang="contact-helpful-2">Any error message shown</li>
+                            <li data-lang="contact-helpful-3">Your browser and device</li>
+                            <li data-lang="contact-helpful-4">Time the issue occurred</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <a href="app.php" class="inline-flex items-center gap-2 text-sm text-slate-700 hover:text-slate-900">
+                        <span data-lang="back-to-app">← Back to Home</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-10 bg-white rounded-2xl shadow-md border border-slate-200 p-6 md:p-8">
+            <h2 class="text-lg font-semibold text-slate-900 mb-3" data-lang="local-support-title">Local Business Support Contacts</h2>
+            <p class="text-slate-600 mb-4" data-lang="local-support-desc">You can also reach out to the following organizations for broader business support:</p>
+            <div class="grid md:grid-cols-3 gap-6 text-sm">
+                <div class="space-y-2">
+                    <div class="font-medium">BEDCO</div>
+                    <div>info@bedco.org.ls</div>
+                    <div>+266 2231 2601</div>
+                    <div>Kingsway Road, Maseru</div>
+                </div>
+                <div class="space-y-2">
+                    <div class="font-medium">LNDC</div>
+                    <div>info@lndc.org.ls</div>
+                    <div>+266 2231 2421</div>
+                    <div>Pioneer Road, Maseru</div>
+                </div>
+                <div class="space-y-2">
+                    <div class="font-medium">SMME (Ministry of Trade)</div>
+                    <div>smme@trade.gov.ls</div>
+                    <div>+266 2231 2421</div>
+                    <div>Maseru, Lesotho</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="max-w-5xl mx-auto px-4 py-8 text-center text-xs text-slate-500"> Basotho Business Ideas</footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure language toggle button label matches current language
+            var btn = document.getElementById('langToggle');
+            if (btn) {
+                var lang = (window.currentLang || localStorage.getItem('selectedLanguage') || 'en');
+                btn.textContent = lang === 'en' ? 'Sesotho' : 'English';
+            }
+
+            // Session-aware navigation: if not logged in, route to index.php
+            var isLoggedIn = !!localStorage.getItem('user_id');
+            if (!isLoggedIn) {
+                var loginPath = '/Business%20Ideas/index.php';
+                document.querySelectorAll('a[href="app.php"]').forEach(function(a) {
+                    a.setAttribute('href', loginPath);
+                });
+                document.querySelectorAll('a[href="history.php"]').forEach(function(a) {
+                    a.setAttribute('href', loginPath);
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>

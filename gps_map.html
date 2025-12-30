@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Location with Leaflet Maps</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+        }
+        
+        .controls {
+            margin-bottom: 20px;
+        }
+        
+        input,
+        button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>GPS Location with Leaflet Maps</h1>
+
+    <div class="controls">
+        <input type="text" id="location" placeholder="Location will appear here" readonly>
+        <button id="getLocationBtn">Get My Location</button>
+    </div>
+
+    <div id="map"></div>
+
+    <div id="errorMessage" class="error"></div>
+
+    <script>
+        // Global variables to store map and marker
+        let map;
+        let marker;
+
+        // Check if running on HTTPS or localhost (required for geolocation)
+        function isSecureContext() {
+            return window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        }
+
+        // Initialize map on page load
+        function initMap() {
+            try {
+                // Default location (fallback)
+                const defaultLocation = {
+                    lat: -26.2041,
+                    lng: 28.0473
+                }; // Johannesburg, South Africa
+
+                // Create map
+                map = L.map('map').setView([defaultLocation.lat, defaultLocation.lng], 12);
+
+                // Add OpenStreetMap tiles
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+
+                // Create marker
+                marker = L.marker([defaultLocation.lat, defaultLocation.lng]).addTo(map)
+                    .bindPopup('Default Location - Johannesburg, South Africa')
+                    .openPopup();
+
+                console.log('Leaflet map initialized successfully');
+            } catch (error) {
+                console.error('Error initializing Leaflet map:', error);
+                document.getElementById('errorMessage').textContent = 'Error initializing map. Please check your internet connection.';
+                document.getElementById('map').style.display = 'none';
+            }
+        }
+
+        // GPS functionality
+        document.getElementById("getLocationBtn").addEventListener("click", () => {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = '';
+
+            if (!isSecureContext()) {
+                errorElement.textContent = 'Geolocation requires HTTPS or localhost. Please access this page over HTTPS.';
+                return;
+            }
+
+            if (navigator.geolocation) {
+                // Get current position for accurate location
+                navigator.geolocation.getCurrentPosition(showMap, showError, {
+                    enableHighAccuracy: true,
+                    timeout: 30000, // Increased timeout for better accuracy
+                    maximumAge: 300000 // 5 minutes
+                });
+            } else {
+                errorElement.textContent = 'Geolocation is not supported by your browser.';
+            }
+        });
+
+        function showMap(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            const accuracy = position.coords.accuracy;
+
+            // Update location input
+            document.getElementById("location").value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+
+            // Update map center
+            map.setView([lat, lng], 16);
+
+            // Update marker position
+            if (marker) {
+                marker.setLatLng([lat, lng]).bindPopup(`You are here: ${lat.toFixed(6)}, ${lng.toFixed(6)} (Accuracy: ${accuracy.toFixed(0)}m)`).openPopup();
+            } else {
+                marker = L.marker([lat, lng]).addTo(map).bindPopup(`You are here: ${lat.toFixed(6)}, ${lng.toFixed(6)} (Accuracy: ${accuracy.toFixed(0)}m)`).openPopup();
+            }
+
+            // Clear any error messages
+            document.getElementById('errorMessage').textContent = '';
+        }
+
+        function showError(error) {
+            const errorElement = document.getElementById('errorMessage');
+            let errorMessage = 'An unknown error occurred.';
+
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMessage = 'Location access denied by user. Please enable location permissions and try again.';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage = 'Location information is unavailable. Please check your GPS settings.';
+                    break;
+                case error.TIMEOUT:
+                    errorMessage = 'Location request timed out. Please try again.';
+                    break;
+            }
+
+            errorElement.textContent = errorMessage;
+        }
+
+        // Load map when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initMap();
+        });
+    </script>
+</body>
+
+</html>

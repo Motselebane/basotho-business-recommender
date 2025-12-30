@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Basotho Business Ideas</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .auth-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .auth-title {
+            text-align: center;
+            color: #4f46e5;
+            margin-bottom: 1.5rem;
+        }
+        
+        .auth-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .auth-form input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        .auth-form button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .auth-form button:hover {
+            background-color: #4338ca;
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #6b7280;
+        }
+        
+        .auth-footer a {
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .error-message {
+            color: #ef4444;
+            margin-top: 1rem;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-container">
+        <div style="text-align: center; margin-bottom: 1rem;">
+            <button id="langToggle" style="background: #e5e7eb; color: #374151; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.875rem;">Sesotho</button>
+        </div>
+        <h1 class="auth-title" data-lang="welcome-back">Welcome Back</h1>
+        <form id="loginForm" class="auth-form">
+            <div class="form-group">
+                <label for="username" data-lang="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password" data-lang="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" data-lang="login-btn">Sign In</button>
+            <div id="errorMessage" class="error-message"></div>
+        </form>
+        <div class="auth-footer">
+            <span data-lang="no-account">Don't have an account?</span> <a href="register.html" data-lang="register-here">Sign up</a>
+        </div>
+    </div>
+
+    <script>
+        // ✅ Translations for login page
+        const loginTranslations = {
+            en: {
+                "welcome-back": "Welcome Back",
+                "username": "Username",
+                "password": "Password",
+                "login-btn": "Sign In",
+                "no-account": "Don't have an account?",
+                "register-here": "Sign up"
+            },
+            st: {
+                "welcome-back": "Khutla Hape",
+                "username": "Lebitso la Mosebelisi",
+                "password": "Phasewete",
+                "login-btn": "Kena",
+                "no-account": "Ha u na akhaonto?",
+                "register-here": "Ngolisa mona"
+            }
+        };
+
+        // ✅ Language toggle with persistence
+        let currentLang = localStorage.getItem("selectedLanguage") || "en";
+
+        function initializeLoginLanguage() {
+            updateLoginLanguage();
+            document.getElementById("langToggle").textContent =
+                currentLang === "en" ? "Sesotho" : "English";
+        }
+
+        document.getElementById("langToggle").addEventListener("click", () => {
+            currentLang = currentLang === "en" ? "st" : "en";
+            localStorage.setItem("selectedLanguage", currentLang);
+            updateLoginLanguage();
+            document.getElementById("langToggle").textContent =
+                currentLang === "en" ? "Sesotho" : "English";
+        });
+
+        function updateLoginLanguage() {
+            document.querySelectorAll("[data-lang]").forEach(el => {
+                const key = el.getAttribute("data-lang");
+                el.textContent = loginTranslations[currentLang][key];
+            });
+        }
+
+        // Initialize language on page load
+        document.addEventListener("DOMContentLoaded", initializeLoginLanguage);
+
+        document.getElementById('loginForm').addEventListener('submit', async(e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorElement = document.getElementById('errorMessage');
+
+            try {
+                const response = await fetch('http://localhost:3000/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        username,
+                        password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Store user_id in localStorage for API calls
+                    if (data.user && data.user.id) {
+                        localStorage.setItem('user_id', data.user.id);
+                        console.log('User ID stored in localStorage:', data.user.id);
+                    }
+                    // Redirect to dashboard or home page after successful login
+                    window.location.href = 'app.php';
+                } else {
+                    // Show error message
+                    errorElement.textContent = data.error || 'Login failed. Please try again.';
+                    errorElement.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorElement.textContent = 'An error occurred. Please try again later.';
+                errorElement.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+
+</html>

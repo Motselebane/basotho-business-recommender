@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Idea Feedback</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false
+            }
+        };
+    </script>
+    <link href="style.css" rel="stylesheet" />
+    <script defer src="scripts.js"></script>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+    <header class="bg-white/90 backdrop-blur border-b border-slate-200">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="index.php" class="text-lg font-semibold text-slate-900" data-lang="brand-site">Basotho Business Ideas</a>
+            <div class="flex items-center gap-4">
+                <nav class="space-x-4 text-sm">
+                    <a href="app.php" class="text-slate-600 hover:underline" data-lang="nav-app">Home</a>
+                    <a href="history.php" class="text-slate-600 hover:underline" data-lang="nav-history">History</a>
+                    <a href="contact.html" class="text-slate-600 hover:underline" data-lang="nav-contact">Contact</a>
+                </nav>
+                <button id="langToggle" class="bg-white text-indigo-600 px-3 py-1 rounded-md text-sm font-medium border border-slate-200">Sesotho</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-4 py-8">
+        <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 md:p-8">
+            <h1 class="text-2xl font-semibold mb-2" data-lang="idea-page-title">Get Feedback On Your Idea</h1>
+            <p class="text-slate-600 mb-6" id="profileHint" data-lang="idea-using-profile">Using your profile and location to tailor the advice.</p>
+
+            <div class="space-y-4">
+                <label class="text-sm font-medium text-slate-700" for="ideaText" data-lang="idea-text-label">Describe your business idea</label>
+                <textarea id="ideaText" class="input-box" rows="6" placeholder="Type your business idea here..."></textarea>
+
+                <div class="flex items-center justify-between gap-3 flex-wrap">
+                    <a href="app.php" class="btn-secondary" data-lang="back-to-app">← Back to Home</a>
+                    <button id="getFeedbackBtn" class="btn-primary" data-lang="get-feedback">Get Feedback</button>
+                    <a href="view-feedback.php" class="btn-secondary" data-lang="view-previous-feedback">View Previous Feedback</a>
+                </div>
+            </div>
+
+            <div id="feedbackResult" class="mt-6 hidden">
+                <h2 class="text-lg font-semibold mb-2" data-lang="feedback-title">AI Feedback</h2>
+                <div id="feedbackContent" class="prose prose-sm max-w-none"></div>
+
+                <!-- Feedback Rating Section -->
+                <div id="feedbackRatingSection" class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 hidden">
+                    <div class="flex items-center justify-between gap-2 flex-wrap mb-3">
+                        <div><strong data-lang="rate-feedback">Rate this feedback</strong></div>
+                        <div id="feedbackAvgRating" class="average-rating-badge" aria-live="polite"></div>
+                    </div>
+                    <div class="stars" id="feedbackStarContainer" role="radiogroup" aria-label="Rating"></div>
+                    <div class="rating-hint text-sm text-gray-600 mt-2" data-lang="rating-hint">Click or tap a star to rate. Use left/right arrows for keyboard.</div>
+                    <div class="rating-actions mt-3">
+                        <button id="feedbackSubmitRating" class="btn-primary text-sm px-4 py-2" type="button" data-lang="submit-rating">Submit Rating</button>
+                        <div class="rating-note text-xs text-gray-500 mt-2" data-lang="rating-note">Your feedback helps improve future responses.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        (function() {
+            // Language is already initialized by scripts.js initializeLanguage()
+            document.addEventListener('DOMContentLoaded', function() {
+                // Initialize language on page load
+                initializeLanguage();
+            });
+
+            // Session-aware navigation on this page as well
+            document.addEventListener('DOMContentLoaded', function() {
+                var isLoggedIn = !!localStorage.getItem('user_id');
+                if (!isLoggedIn) {
+                    var loginPath = '/Business%20Ideas/index.php';
+                    document.querySelectorAll('a[href="app.php"]').forEach(function(a) {
+                        a.setAttribute('href', loginPath);
+                    });
+                    document.querySelectorAll('a[href="history.php"]').forEach(function(a) {
+                        a.setAttribute('href', loginPath);
+                    });
+                }
+            });
+
+            // Submit to backend
+            const btn = document.getElementById('getFeedbackBtn');
+            if (btn) {
+                btn.addEventListener('click', async function() {
+                    const idea = document.getElementById('ideaText').value.trim();
+                    const params = new URLSearchParams(window.location.search);
+                    const payload = {
+                        user_id: Number(localStorage.getItem('user_id') || 0) || null,
+                        skills: params.get('skills') || '',
+                        interests: params.get('interests') || '',
+                        capital: params.get('capital') || '',
+                        location: params.get('location') || '',
+                        availability: params.get('availability') || '',
+                        idea: idea,
+                        lang: params.get('lang') || (window.currentLang || localStorage.getItem('selectedLanguage') || 'en')
+                    };
+
+                    // Basic validation
+                    if (!idea) {
+                        const lang = window.currentLang || localStorage.getItem('selectedLanguage') || 'en';
+                        const alertMsg = (window.translations && translations[lang] && translations[lang]['alert-type-idea']) || 'Please type your business idea first.';
+                        alert(alertMsg);
+                        return;
+                    }
+
+                    const resultEl = document.getElementById('feedbackResult');
+                    const contentEl = document.getElementById('feedbackContent');
+                    const lang = window.currentLang || localStorage.getItem('selectedLanguage') || 'en';
+                    const loadingMsg = (window.translations && translations[lang] && translations[lang]['generating-feedback']) || 'Generating feedback...';
+                    resultEl.classList.remove('hidden');
+                    contentEl.innerHTML = '<div class="loading-container"><div class="spinner"></div><p class="loading-text">' + loadingMsg + '</p></div>';
+
+                    async function postFeedbackSafe(baseUrl, signal) {
+                        try {
+                            const makeReq = (credMode) => fetch(baseUrl + '/api/idea-feedback', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json'
+                                },
+                                credentials: credMode,
+                                body: JSON.stringify(payload),
+                                signal: signal
+                            });
+                            // Try with credentials first, then without credentials
+                            let resp = await makeReq('include');
+                            if (!resp.ok) {
+                                try {
+                                    resp = await makeReq('omit');
+                                } catch (_) {}
+                            }
+                            if (!resp.ok) {
+                                let errData = null;
+                                try {
+                                    errData = await resp.json();
+                                } catch (_) {}
+                                return {
+                                    ok: false,
+                                    status: resp.status,
+                                    data: errData
+                                };
+                            }
+                            const data = await resp.json().catch(() => null);
+                            return {
+                                ok: true,
+                                status: resp.status,
+                                data
+                            };
+                        } catch (e) {
+                            return {
+                                ok: false,
+                                status: 0,
+                                data: null
+                            };
+                        }
+                    }
+
+                    // Try multiple backends: prefer 3000 (backend), then same-origin and 5000
+                    const bases = [];
+                    bases.push('http://localhost:3000');
+                    bases.push('http://127.0.0.1:3000');
+                    try {
+                        bases.push(window.location.origin);
+                    } catch (_) {}
+                    bases.push('http://localhost:5000');
+                    bases.push('http://127.0.0.1:5000');
+
+                    let apiResult = {
+                        ok: false
+                    };
+                    for (const base of bases) {
+                        // Create AbortController for timeout
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+
+                        try {
+                            apiResult = await postFeedbackSafe(base, controller.signal);
+                            clearTimeout(timeoutId);
+                            if (apiResult && apiResult.ok && apiResult.data) break;
+                        } catch (error) {
+                            clearTimeout(timeoutId);
+                            if (error.name === 'AbortError') {
+                                console.warn(`Request to ${base} timed out after 40 seconds`);
+                                continue; // Try next base
+                            }
+                            throw error;
+                        }
+                    }
+
+                    if (!apiResult.ok || !apiResult.data) {
+                        const lang = window.currentLang || localStorage.getItem('selectedLanguage') || 'en';
+                        const fallbackMsg = (window.translations && translations[lang] && translations[lang]['unable-get-feedback']) || 'Unable to get feedback. Please try again later.';
+                        const msg = (apiResult && apiResult.data && apiResult.data.message) ? apiResult.data.message : fallbackMsg;
+                        contentEl.innerHTML = '<div class="text-red-600">' + String(msg) + '</div>';
+                        return;
+                    }
+                    const text = (apiResult.data && apiResult.data.feedback ? apiResult.data.feedback : '');
+                    // Simple formatting similar to app
+                    const rendered = String(text)
+                        .replace(/\*/g, '')
+                        .replace(/(Summary|How to make it successful|Risks|Mitigations|Step-by-step plan|Budget alignment|Kakaretso|Mokhoa oa ho atleha|Likotsi|Mekhoa ea ho fokotsa likotsi|Mehato ka mehato|Tekanyetso le Budget)/gi,
+                            m => '<span style="color:#4f46e5; font-weight:600;">' + m + '</span>');
+                    contentEl.innerHTML = '<div style="white-space:pre-wrap; line-height:1.6;">' + rendered + '</div>';
+
+                    // Show rating section after feedback is displayed
+                    const ratingSection = document.getElementById('feedbackRatingSection');
+                    if (ratingSection) {
+                        ratingSection.classList.remove('hidden');
+                        // Initialize feedback rating widget
+                        initFeedbackRating();
+                    }
+
+                    // Save feedback to database after successful display
+                    if (payload.user_id && payload.user_id > 0) {
+                        saveFeedbackToDatabase(payload, text);
+                    }
+                });
+            }
+
+            // Function to save feedback to database after successful display
+            function saveFeedbackToDatabase(payload, feedbackText) {
+                fetch('/Business%20Ideas/business-recommender/save_feedback.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            user_id: payload.user_id,
+                            idea: payload.idea,
+                            feedback: feedbackText,
+                            skills: payload.skills,
+                            interests: payload.interests,
+                            capital: payload.capital,
+                            location: payload.location,
+                            availability: payload.availability,
+                            language: payload.lang
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log('✅ Feedback saved to database successfully');
+                            // Initialize feedback rating after successful save
+                            initFeedbackRating(data.feedback_id);
+                        } else {
+                            console.error('⚠️ Failed to save feedback to database:', data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('⚠️ Error saving feedback to database:', error);
+                    });
+            }
+
+            // Function to initialize feedback rating widget
+            function initFeedbackRating(feedbackId = null) {
+                const section = document.getElementById('feedbackRatingSection');
+                const starContainer = document.getElementById('feedbackStarContainer');
+                const submitBtn = document.getElementById('feedbackSubmitRating');
+                const avgEl = document.getElementById('feedbackAvgRating');
+                if (!section || !starContainer || !submitBtn) return;
+
+                let currentRating = 0;
+                let hasId = !!feedbackId;
+                let feedbackTimeout = null;
+
+                // Create or get feedback message element
+                let feedbackEl = section.querySelector('.rating-feedback');
+                if (!feedbackEl) {
+                    feedbackEl = document.createElement('div');
+                    feedbackEl.className = 'rating-feedback';
+                    feedbackEl.style.cssText = 'margin-top: 0.5rem; font-size: 0.875rem; min-height: 1.25rem;';
+                    submitBtn.parentElement.appendChild(feedbackEl);
+                }
+
+                function showRatingFeedback(message, type = 'info') {
+                    if (feedbackTimeout) clearTimeout(feedbackTimeout);
+
+                    // For success, show popup; for others, show inline
+                    if (type === 'success') {
+                        showSuccessPopup(message);
+                        feedbackEl.textContent = '';
+                    } else {
+                        const colors = {
+                            error: '#ef4444',
+                            info: '#6366f1'
+                        };
+                        feedbackEl.textContent = message;
+                        feedbackEl.style.color = colors[type] || colors.info;
+                        feedbackEl.style.fontWeight = '400';
+                        feedbackTimeout = setTimeout(() => {
+                            feedbackEl.textContent = '';
+                        }, 4000);
+                    }
+                }
+
+                function showSuccessPopup(message) {
+                    const popup = document.createElement('div');
+                    popup.className = 'rating-success-popup';
+                    popup.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <svg style="width: 20px; height: 20px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>${message}</span>
+                        </div>
+                    `;
+                    popup.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        background: #10b981;
+                        color: white;
+                        padding: 12px 20px;
+                        border-radius: 8px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                        font-size: 0.875rem;
+                        font-weight: 500;
+                        z-index: 9999;
+                        animation: slideInRight 0.3s ease-out;
+                    `;
+
+                    // Add animation keyframes if not already present
+                    if (!document.getElementById('popupAnimationStyles')) {
+                        const style = document.createElement('style');
+                        style.id = 'popupAnimationStyles';
+                        style.textContent = `
+                            @keyframes slideInRight {
+                                from { transform: translateX(100%); opacity: 0; }
+                                to { transform: translateX(0); opacity: 1; }
+                            }
+                            @keyframes fadeOut {
+                                from { opacity: 1; }
+                                to { opacity: 0; }
+                            }
+                        `;
+                        document.head.appendChild(style);
+                    }
+
+                    document.body.appendChild(popup);
+
+                    // Fade out and remove after 3 seconds
+                    setTimeout(() => {
+                        popup.style.animation = 'fadeOut 0.3s ease-out';
+                        setTimeout(() => {
+                            if (popup.parentElement) {
+                                popup.parentElement.removeChild(popup);
+                            }
+                        }, 300);
+                    }, 3000);
+                }
+
+                function renderStars() {
+                    starContainer.innerHTML = '';
+                    for (let i = 1; i <= 5; i++) {
+                        const span = document.createElement('span');
+                        span.className = 'star' + (i <= currentRating ? ' active' : '');
+                        span.textContent = '★';
+                        span.setAttribute('role', 'radio');
+                        span.setAttribute('aria-checked', i === currentRating ? 'true' : 'false');
+                        span.setAttribute('tabindex', '0');
+                        span.dataset.value = String(i);
+                        starContainer.appendChild(span);
+                    }
+                    bindHoverPreview();
+                }
+
+                function bindHoverPreview() {
+                    const stars = Array.from(starContainer.querySelectorAll('.star'));
+                    stars.forEach((star, idx) => {
+                        star.addEventListener('mouseenter', () => {
+                            stars.forEach((s, i) => s.classList.toggle('preview', i <= idx));
+                        });
+                    });
+                    starContainer.addEventListener('mouseleave', () => {
+                        stars.forEach(s => s.classList.remove('preview'));
+                    });
+                }
+
+                function bindStarEvents() {
+                    starContainer.addEventListener('click', (e) => {
+                        const t = e.target;
+                        if (t && t.dataset && t.dataset.value) {
+                            currentRating = parseInt(t.dataset.value, 10);
+                            renderStars();
+                        }
+                    });
+                    starContainer.addEventListener('keydown', (e) => {
+                        if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+                            currentRating = Math.min(5, (currentRating || 0) + 1);
+                            renderStars();
+                        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+                            currentRating = Math.max(1, (currentRating || 1) - 1);
+                            renderStars();
+                        }
+                    });
+                }
+
+                async function submitRating() {
+                    if (!hasId) {
+                        console.warn('Rating submission disabled: feedback ID not available.');
+                        return;
+                    }
+                    if (currentRating < 1 || currentRating > 5) {
+                        console.warn('Please select a rating between 1 and 5');
+                        showRatingFeedback('Please select a rating between 1 and 5', 'error');
+                        return;
+                    }
+
+                    // Disable button during submission
+                    submitBtn.disabled = true;
+                    showRatingFeedback('Submitting...', 'info');
+
+                    try {
+                        const res = await fetch('business-recommender/update_feedback_rating.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                id: Number(feedbackId),
+                                rating: currentRating
+                            })
+                        });
+                        const payload = await res.json().catch(() => ({
+                            success: false
+                        }));
+                        if (!res.ok || !payload.success) {
+                            console.error('Failed to save rating', payload);
+                            showRatingFeedback('Failed to save rating. Please try again.', 'error');
+                            submitBtn.disabled = false;
+                            return;
+                        }
+                        showRatingFeedback('✓ Rating submitted successfully!', 'success');
+                        refreshAverage();
+                        // Re-enable button after short delay
+                        setTimeout(() => {
+                            submitBtn.disabled = false;
+                        }, 2000);
+                    } catch (e) {
+                        console.error('Rating submit error:', e);
+                        showRatingFeedback('Network error. Please try again.', 'error');
+                        submitBtn.disabled = false;
+                    }
+                }
+
+                async function refreshAverage() {
+                    if (!avgEl) return;
+                    try {
+                        const res = await fetch('business-recommender/website_rating.php', {
+                            cache: 'no-store'
+                        });
+                        const data = await res.json();
+                        if (data.success && data.rating) {
+                            const lang = window.currentLang || localStorage.getItem('selectedLanguage') || 'en';
+                            const translatedText = translations[lang] && translations[lang]['average-website-rating'] ?
+                                translations[lang]['average-website-rating'] :
+                                'Average Website Rating';
+                            avgEl.textContent = `🌟 ${translatedText}: ${data.rating} / 5`;
+                        }
+                    } catch (_) {
+                        // ignore silently
+                    }
+                }
+
+                // Initialize
+                renderStars();
+                bindStarEvents();
+                if (!hasId) {
+                    submitBtn.disabled = true;
+                    submitBtn.title = 'Rating can be submitted after this feedback is saved with an ID.';
+                }
+                submitBtn.addEventListener('click', submitRating);
+                refreshAverage();
+            }
+        })();
+    </script>
+</body>
+
+</html>
